@@ -13,9 +13,9 @@ class UserAdmin(auth.UserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference the removed 'username' field
     fieldsets = (
-        (None, {'fields': ('passport_id', 'password')}),
+        (None, {'fields': ('full_name', 'password')}),
         (_('Персональная информация'), {'fields': (
-                                            'first_name', 'last_name',
+                                            'last_name', 'first_name',
                                             'patronymic', 'email',
                                             'passport_id', 'birth_date',
                                             'address'
@@ -24,15 +24,22 @@ class UserAdmin(auth.UserAdmin):
                                  'groups', 'user_permissions')}),
         (_('Важные даты'), {'fields': ('last_login', 'date_joined')}),
     )
+    readonly_fields = ['full_name']
+    def full_name(self, obj):
+        return obj.get_full_name()
+    full_name.allow_tags = True
+    full_name.short_description = _('Полное имя')
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2')}
+            'fields': ('passport_id', 'last_name', 'last_name',
+                       'patronymic', 'email', 'birth_date',
+                       'address', 'password1', 'password2')}
         ),
     )
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ('passport_id', 'first_name', 'last_name', 'patronymic',
+    list_display = ('passport_id', 'last_name', 'first_name', 'patronymic',
                     'birth_date', 'is_staff')
     search_fields = ('passport_id', 'first_name', 'last_name')
     ordering = ('passport_id',)
