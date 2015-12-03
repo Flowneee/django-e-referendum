@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title_block %}{% trans 'Главная' %}{% endblock %}
 
 {% block content_block %}
-  <div class="col-mg-6">
+  <div class="col-xs-8">
     {% for ref in ref_list %}
-      {{ ref.title }}
+      {% block referendum_short_block %}{% endblock referendum_short_block %}
     {% empty %}
-      <li>No refs yet.</li>
+      <b style="font-size: 40px; text-align: center;">No refs yet.</b>
     {% endfor %}
   </div>
-  <div class="col-mg-4"></div>
+  <div class="col-xs-4">
+    {% include 'referendums/successful_referendums.html' %}
+  </div>
 {% endblock content_block %}

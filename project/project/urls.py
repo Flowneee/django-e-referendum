@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^$', include('referendums.urls')),
+    url(r'^', include('referendums.urls')),
 ]
 
 if settings.DEBUG:
