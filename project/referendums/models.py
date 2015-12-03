@@ -6,13 +6,23 @@ from django.utils.translation import ugettext_lazy as _
 
 class Referendum(models.Model):
 
-    question = models.TextField(verbose_name=_('Сущность'))
-    result = models.TextField(verbose_name=_('Итоговое решение'))
+    title = models.TextField(verbose_name=_('Название'), max_length=200)
+    question = models.TextField(verbose_name=_('Содержание'))
+    result = models.TextField(verbose_name=_('Итоговое решение'), blank=True)
     initiator = models.OneToOneField(
         'users.User',
         verbose_name=_('Инициатор'),
     )
     top_address = models.TextField(verbose_name=_('Область проведения'))
+
+    def __str__(self):
+        return str(self.title)
+
+    def get_short_question(self):
+        if len(str(self.question)) <= 400:
+            return str(self.question)[0:len(str(self.question))]
+        else:
+            return str(self.question)[0:400]
 
     class Meta:
 

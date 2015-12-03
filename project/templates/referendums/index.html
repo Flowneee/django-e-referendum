@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content_block %}
+  <div class="col-mg-6">
+    {% for ref in ref_list %}
+      {{ ref.title }}
+    {% empty %}
+      <li>No refs yet.</li>
+    {% endfor %}
+  </div>
+  <div class="col-mg-4"></div>
+{% endblock content_block %}
