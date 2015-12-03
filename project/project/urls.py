@@ -16,9 +16,16 @@ Including another URLconf
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from django.conf import settings
+from django.views.generic.base import RedirectView
+from users.views import *
+from home.views import *
 
 urlpatterns = [
+    url(r'^admin/login*', RedirectView.as_view(url='/login/')),
+    url(r'^register/$', RegisterView.as_view(), name='register'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^$', include('home.urls')),
 ]
 
 if settings.DEBUG:

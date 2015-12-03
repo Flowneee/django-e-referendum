@@ -14,6 +14,11 @@ class Referendum(models.Model):
     )
     top_address = models.TextField(verbose_name=_('Область проведения'))
 
+    class Meta:
+
+        verbose_name = _('Референдум')
+        verbose_name_plural = _('Референдумы')
+
 
 class Vote(models.Model):
 
@@ -40,3 +45,8 @@ class Vote(models.Model):
 
     def __str__(self):
         return str(self.result)
+
+    class Meta:
+
+        verbose_name = _('Голос')
+        verbose_name_plural = _('Голоса')

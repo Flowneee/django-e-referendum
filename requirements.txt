@@ -1,1 +1,6 @@
 django == 1.8.7 
+django-debug-toolbar == 1.4
+django-mmc == 1.6
+django-admin-bootstrapped == 2.5.6
+django-app-namespace-template-loader == 0.3
+django-allauth == 0.24.1

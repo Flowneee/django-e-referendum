@@ -1,7 +1,8 @@
 {% extends "admin:admin/base_site.html" %}
+{% load i18n %}
 
-{% block title %}{{ title }} | {{ _('Система электронного референдума') }}{% endblock %}
+{% block title %}{{ title }} | {% trans "Система электронного референдума" %}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{{ _('Система электронного референдума') }}</h1>
+<h1 id="site-name">{% trans "Система электронного референдума" %}</h1>
 {% endblock %}
