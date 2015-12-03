@@ -1,0 +1,16 @@
+{% extends 'referendums/index.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block referendum_short_block %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <b>{{ ref.title }}</b>
+      {% trans 'Создан' %}
+      {#{ ref.date_created }#}
+    </div>
+    <div class="panel-body">
+      {{ ref.question }}
+    </div>
+  </div>
+{% endblock referendum_short_block %}
