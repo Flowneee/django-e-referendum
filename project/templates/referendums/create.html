@@ -4,6 +4,22 @@
 
 {% block content_block %}
   <div>
-    {% bootstrap_form form %}
+    
+    <form class="form" role="form" action="{% url 'create_referendum' %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="title">{% trans 'Название' %}</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="{% trans 'Название референдума' %}" size="200" />
+      </div>
+      <div class="form-group">
+        <label for="question">{% trans 'Описание' %}</label>
+        <textarea class="form-control" id="question" name="question" placeholder="{% trans 'Описание референдума' %}"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="top_address">{% trans 'Область проведения' %}</label>
+        <textarea class="form-control" id="top_address" name="top_address" placeholder="{% trans 'Описание референдума' %}"></textarea>
+      </div>
+      <button  class="btn btn-danger btn-lg">{% trans 'Организовать референдум' %}</button>
+    </form>
   </div>
 {% endblock content_block %}

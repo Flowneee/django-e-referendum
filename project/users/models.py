@@ -75,6 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     birth_date = models.DateField(verbose_name=_('Дата рождения'))
     address = models.TextField(verbose_name=_('Адрес регистрации'))
+    is_approved = models.BooleanField(verbose_name=_('Подтвержден'),
+                                      default=False)
 
     #Информация об аккаунте
     is_staff = models.BooleanField(

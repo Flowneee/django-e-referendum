@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content_block %}
-  <div class="col-xs-8">
+  <div class="col-xs-4 col-xs-offset-3">
     {% for ref in ref_list %}
       {% block referendum_short_block %}{% endblock referendum_short_block %}
     {% empty %}
       <li>No refs yet.</li>
     {% endfor %}
   </div>
-  <div class="col-xs-4">
+  <div class="col-xs-2">
     {% include 'referendums/successful_referendums.html' %}
   </div>
 {% endblock content_block %}

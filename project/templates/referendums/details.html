@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block content_block %}
+  <div class="col-xs-4 col-xs-offset-3">
+    <h1>{{ object.title }}</h1>
+    {{ object.question }}
+    <div style="margin-top: 10px;">
+      <form class="" method="post" action="/referendum/{{ object.id }}/agree/" style="display:inline-block;">
+        {% csrf_token %}
+        <input class="btn btn-default btn-success btn-lg" type="submit" value="{% trans 'Согласен' %}">
+      </form>
+      <form class="" method="post" action="/referendum/{{ object.id }}/disagree/" style="display:inline-block; margin-left: 5px;">
+        {% csrf_token %}
+        <input class="btn btn-default btn-danger btn-lg" type="submit" value="{% trans 'Не согласен' %}">
+      </form>
+    </div>
+  </div>
+
+  <div class="col-xs-2">
+    <h2>{% trans 'Голоса:' %}</h2>
+    <h3>{% trans 'За:' %} {{ for }}</h3> 
+    <h3>{% trans 'Против:' %} {{ against }}</h3>
+  </div>
+
+{% endblock content_block %}

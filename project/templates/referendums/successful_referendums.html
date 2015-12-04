@@ -2,9 +2,13 @@
 {% load bootstrap3 %}
 
 <div>
-  <form action="/create/" method="get">
-    <input type="submit" value="{% trans 'Организовать референдум' %}" id="go_to_create_ref" class="btn btn-danger btn-lg btn-block"/>
-  </form>     
+  {% if user.is_authenticated %}
+    <form action="/create/" method="get">
+      <input type="submit" value="{% trans 'Организовать референдум' %}" id="go_to_create_ref" class="btn btn-danger btn-lg btn-block"/>
+    </form>    
+  {% else %}
+    <input type="submit" value="{% trans 'Для организации референдума необохдимо зарегистрироваться' %}" id="go_to_create_ref" class="btn btn-danger btn-lg btn-block disabled" disabled="true"/>
+  {% endif %}   
   {% for suc_ref in successful_refs %}
     <div class="panel panel-default">
       <div class="panel-body">
