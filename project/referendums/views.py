@@ -52,6 +52,9 @@ def add_vote(request, pk, decision):
         a = 'y'
     elif (decision == 'disagree'):
         a = 'n'
-    v = Vote(referendum=r, user=u, result=a)
-    v.save()
+    obj, created = Vote.objects.update_or_create(
+        referendum=r,
+        user=u,
+        defaults={'result': a}
+    )
     return redirect('/referendum/{0}'.format(pk))
