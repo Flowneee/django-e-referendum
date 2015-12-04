@@ -3,8 +3,8 @@ from django.core.validators import RegexValidator
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
+                                        BaseUserManager, Group)
 
 
 class UserManager(BaseUserManager):
@@ -118,3 +118,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None):
         send_mail(subject, message, from_email, [self.email])
+
+    def __str__(self):
+        s = self.get_short_name() + ' ({0})'.format(self.passport_id)
+        return s
+
+
+class ProxyGroup(Group):
+
+    class Meta:
+        proxy = True
+        verbose_name = Group._meta.verbose_name
+        verbose_name_plural = Group._meta.verbose_name_plural

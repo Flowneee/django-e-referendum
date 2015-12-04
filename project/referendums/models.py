@@ -66,7 +66,7 @@ class Vote(models.Model):
     )
 
     def __str__(self):
-        return str(self.result)
+        return str(self.get_result_display())
 
     class Meta:
 

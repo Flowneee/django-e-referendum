@@ -1,9 +1,32 @@
 from django.contrib import admin
 from django.contrib.auth import admin as auth
 from django.utils.translation import ugettext_lazy as _
+from django.forms import TextInput, Textarea
+from django.db import models
+from django.contrib.auth.models import Group
 
-from users.models import User
+from users.models import User, ProxyGroup
 from users.forms import UserChangeForm, UserCreationForm
+from referendums.models import Vote, Referendum
+
+
+class VotesInline(admin.TabularInline):
+    model = Vote
+    extra = 0
+    readonly_fields = ('id', )
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '50'})},
+    }
+
+
+class ReferendumsInline(admin.TabularInline):
+    model = Referendum
+    extra = 0
+    readonly_fields = ('id', )
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '30'})},
+        models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 35})},
+    }
 
 
 class UserAdmin(auth.UserAdmin):
@@ -41,4 +64,11 @@ class UserAdmin(auth.UserAdmin):
     search_fields = ('passport_id', 'first_name', 'last_name')
     ordering = ('passport_id',)
 
+    inlines = [
+        ReferendumsInline,
+        VotesInline,
+    ]
+
 admin.site.register(User, UserAdmin)
+admin.site.unregister(Group)
+admin.site.register(ProxyGroup, auth.GroupAdmin)
