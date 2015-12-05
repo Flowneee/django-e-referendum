@@ -5,9 +5,9 @@
 {% block referendum_short_block %}
   <div class="panel panel-default">
     <div class="panel-heading">
-      <b>{{ ref.title }}</b>
+      <a href='/referendum/{{ ref.pk }}'>{{ ref.title }}</a>
       {% trans 'Создан' %}
-      {#{ ref.date_created }#}
+      {{ ref.datetime_created }}
     </div>
     <div class="panel-body">
       {{ ref.question }}
