@@ -72,3 +72,5 @@ class Vote(models.Model):
 
         verbose_name = _('Голос')
         verbose_name_plural = _('Голоса')
+
+        unique_together = (('referendum', 'user'),)
