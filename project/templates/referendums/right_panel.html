@@ -13,11 +13,4 @@
   {% else %}
     <input type="submit" value="{% trans 'Организовать референдум' %}" id="go_to_create_ref" class="btn btn-danger btn-lg btn-block disabled" title="{% trans 'Для организации референдума необохдимо зарегистрироваться' %}"></input>
   {% endif %}   
-  {% for suc_ref in successful_refs %}
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <b>{{ ref.title }}</b>
-      </div>
-    </div>
-  {% endfor %}
 </div>
