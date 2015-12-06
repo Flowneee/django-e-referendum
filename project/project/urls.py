@@ -20,10 +20,14 @@ from django.views.generic.base import RedirectView
 from users.views import *
 
 urlpatterns = [
-    #url(r'^admin/login*', RedirectView.as_view(url='/login/')),
+    url(r'^login/$', 'django.contrib.auth.views.login',
+        {'template_name': 'users/login.html'}, name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': reverse_lazy('index')}, name='logout'),
     url(r'^register/$', RegisterView.as_view(), name='register'),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/', include('allauth.urls')),
+    url(r'^admin/login*', RedirectView.as_view(url='/login/')),
+    url(r'^admin/', include(admin.site.urls), name='admin'),
+    #url(r'^accounts/', include('allauth.urls')),
     url(r'^', include('referendums.urls')),
 ]
 

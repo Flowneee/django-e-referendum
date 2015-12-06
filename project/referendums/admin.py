@@ -52,6 +52,7 @@ class ReferendumAdmin(admin.ModelAdmin):
                                             'id',
                                             'title',
                                             'question',
+                                            'is_over',
                                             'result',
                                             'initiator',
                                             'top_address',
@@ -63,11 +64,11 @@ class ReferendumAdmin(admin.ModelAdmin):
             'classes': ('wide',),
             'fields': ('title',
                        'question',
+                       'is_over',
                        'result',
                        'initiator',
                        'top_address',
-                       'datetime_created',)},
-        ),
+                       'datetime_created',)},),
     )
 
     readonly_fields = ('id', 'agree_votes_number',
@@ -76,10 +77,11 @@ class ReferendumAdmin(admin.ModelAdmin):
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
     }
 
-    list_display = ('id', 'title',
+    list_display = ('id', 'title', 'is_over',
                     'result', 'initiator', 'datetime_created',
                     'agree_votes_number', 'disagree_votes_number',)
-    search_fields = ('id', 'title', 'result', 'initiator', 'datetime_created',)
+    search_fields = ('id', 'title', 'result', 'initiator', 'datetime_created',
+                     'is_over',)
     ordering = ('datetime_created',)
 
 

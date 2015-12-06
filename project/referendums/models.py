@@ -19,6 +19,7 @@ class Referendum(models.Model):
         verbose_name=_('Создан'),
         default=timezone.now
     )
+    is_over = models.BooleanField(verbose_name=_('Закончен'), default=False)
 
     def __str__(self):
         return str(self.title)

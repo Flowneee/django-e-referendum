@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n %}
 {% load bootstrap3 %}
-{% bootstrap_javascript %}
 
-{% block additional_head_block %}{{ form.media }}{% endblock %}
+{% block extrahead_block %}
+  <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-datetimepicker.min.css"></link>
+  <script type="text/javascript" src="/static/js/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="/static/js/bootstrap-datetimepicker.min.js"></script>
+{% endblock extrahead_block %}
+
 {% block title_block %}{% trans 'Регистрация' %}{% endblock %}
 
 {% block content_block %}
@@ -15,9 +19,9 @@
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}
-        <button type="submit" class="btn btn-primary">
-          {% trans 'Зарегестрироваться' %}
-        </button>
+          <button type="submit" class="btn btn-primary">
+            {% trans 'Зарегестрироваться' %}
+          </button>
         {% endbuttons %}
       </form>
     {% endif %}
