@@ -5,6 +5,44 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager, Group)
+from django.core.validators import *
+from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
+
+
+class NameValidator(RegexValidator):
+    regex = r'[а-яА-Я]{1,}'
+    message = _('Это поле может содержать только символы кириллицы.')
+
+
+@deconstructible
+class BirthDateValidator(object):
+    adulthood = 18
+    message_too_old = _('Голосовать могут только лица с {0} лет.'.format(adulthood))
+    message_future = _('Дата рождения не может быть будущим. Введите корректную дату рождения')
+
+    def __init__(self, adulthood=None, message_too_old=None,
+                 message_future=None):
+        if adulthood is not None:
+            self.adulthood = adulthood
+        if message_too_old is not None:
+            self.message_too_old = message_too_old
+        if message_future is not None:
+            self.message_future = message_future
+
+    def __call__(self, value):
+        now = timezone.now().date()
+        if now < value:
+            raise ValidationError(self.message_future)
+        if (now.year - value.year) < self.adulthood:
+            raise ValidationError(self.message_too_old)
+
+    def __eq__(self, other):
+        return (
+            self.adulthood == other.adulthood and
+            self.message_too_old == other.message_too_old and
+            self.message_future == other.message_future
+        )
 
 
 class UserManager(BaseUserManager):
@@ -51,34 +89,45 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    #Персональная информация
-    first_name = models.CharField(verbose_name=_('Имя'), max_length=75)
-    last_name = models.CharField(verbose_name=_('Фамилия'), max_length=75)
+    # Персональная информация
+    first_name = models.CharField(
+        verbose_name=_('Имя'), max_length=75,
+        validators=[NameValidator(), ]
+    )
+    last_name = models.CharField(
+        verbose_name=_('Фамилия'), max_length=75,
+        validators=[NameValidator(), ]
+    )
     patronymic = models.CharField(
         verbose_name=_('Отчество'),
-        max_length=75, blank=True
+        max_length=75, blank=True,
+        validators=[NameValidator(), ]
     )
     email = models.EmailField(
         verbose_name=_('Адрес электронной почты'),
-        max_length=254, blank=True
+        max_length=254, blank=True,
+        validators=[EmailValidator(message=_('Ввелите корректный e-mail.')), ]
     )
     passport_id = models.CharField(
         verbose_name=_('Номер и серия паспорта'),
         validators=[
             RegexValidator(
                 regex=r'[0-9]{10}',
-                message='Введен некорректный номер паспорта',
+                message=_('Введен некорректный номер паспорта.'),
             ),
         ],
         max_length=10,
         unique=True,
     )
-    birth_date = models.DateField(verbose_name=_('Дата рождения'))
+    birth_date = models.DateField(
+        verbose_name=_('Дата рождения'),
+        validators=[BirthDateValidator(), ],
+    )
     address = models.TextField(verbose_name=_('Адрес регистрации'))
     is_approved = models.BooleanField(verbose_name=_('Подтвержден'),
                                       default=False)
 
-    #Информация об аккаунте
+    # Информация об аккаунте
     is_staff = models.BooleanField(
         verbose_name=_('Администратор'),
         default=False,

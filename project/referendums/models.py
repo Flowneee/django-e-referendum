@@ -30,7 +30,17 @@ class Referendum(models.Model):
             return str(self.question)[0:400]
 
     def get_absolute_url(self):
-            return '/referendum/{0}/'.format(self.id)
+        return '/referendum/{0}/'.format(self.id)
+
+    def _agree_votes_number(self):
+        return len(self.ref_votes.filter(result='y'))
+    _agree_votes_number.short_description = _('За')
+    agree_votes_number = property(_agree_votes_number)
+
+    def _disagree_votes_number(self):
+        return len(self.ref_votes.filter(result='n'))
+    _disagree_votes_number.short_description = _('Против')
+    disagree_votes_number = property(_disagree_votes_number)
 
     class Meta:
 
