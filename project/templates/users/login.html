@@ -3,34 +3,16 @@
 {% load bootstrap3 %}
 
 
-{% block title_block %}{% trans 'Логин' %}{% endblock %}
+{% block title_block %}{% trans 'Вход' %}{% endblock %}
 
 {% block content_block %}
-<form action="{% url 'login' %}" method="post">
-  {% csrf_token %}
-  {% bootstrap_form form %}
-
-  
-  {% if form.non_field_errors %}
-    <p>
-      {% for error in form.non_field_errors %}
-      {{ error }}
-      {% endfor %}
-    </p>
-  {% endif %}
-  {% for field in form %}
-    <div>
-      {{ field.label_tag }}
-      {{ field }}
-      {% if field.errors %}
-        <p>
-          {% for error in field.errors %}
-          {{ error }}
-          {% endfor %}
-        </p>
-      {% endif %}
-    </div>
-  {% endfor %}
-  <input type="submit" value="Submit" />
-</form>
+  <div class="col-xs-2 col-xs-offset-5">
+    <form action="{% url 'login' %}" method="post">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      <button type="submit" class="btn btn-primary btn-block">
+        {% trans 'Войти' %}
+      </button>
+    </form>
+  </div>
 {% endblock %}

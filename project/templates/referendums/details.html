@@ -4,17 +4,21 @@
 
 {% block content_block %}
   <div class="col-xs-4 col-xs-offset-3">
-    <h1>{{ object.title }}</h1>
-    {{ object.question }}
+    <h1>{{ referendum.title }}</h1>
+    {{ referendum.question }}
     <div style="margin-top: 10px;">
-      <form class="" method="post" action="/referendum/{{ object.id }}/agree/" style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg" type="submit" value="{% trans 'Согласен' %}">
-      </form>
-      <form class="" method="post" action="/referendum/{{ object.id }}/disagree/" style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg" type="submit" value="{% trans 'Не согласен' %}">
-      </form>
+      {% if not referendum.is_over %}
+        {% include 'referendums/vote_buttons.html' %}
+      {% else %}
+        <div class="panel panel-default">
+          <div class="panel-header">
+            <strong>{% trans 'Итог' %}</strong>
+          </div>
+          <div class="panel-body">
+            {{ object.result }}
+          </div>
+        </div>
+      {% endif %}
     </div>
   </div>
 

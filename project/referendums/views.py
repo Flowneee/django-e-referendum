@@ -2,9 +2,12 @@ from django.views.generic import TemplateView, CreateView
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
+from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
+
 from .models import *
 from users.models import User
-from django.utils import timezone
+from project.settings import DEBUG
 
 # Create your views here.
 
@@ -35,11 +38,21 @@ class ReferendumDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ReferendumDetailView, self).get_context_data(**kwargs)
-        context['object'] = Referendum.objects.get(id=kwargs['pk'])
-        context['votes'] = Vote.objects.filter(referendum=context['object'])
+        context['referendum'] = Referendum.objects.get(id=kwargs['pk'])
+        context['votes'] = Vote.objects.filter(
+            referendum=context['referendum'],
+        )
         context['for'] = len(context['votes'].filter(result='y'))
         context['against'] = len(context['votes'].filter(result='n'))
-        print(context)
+        if self.request.user != AnonymousUser():
+            try:
+                context['user_vote'] = self.request.user.user_votes.get(
+                    referendum=context['referendum'],
+                )
+            except Vote.DoesNotExist:
+                context['user_vote'] = None
+        if DEBUG:
+            print(context)
         return context
 
 
