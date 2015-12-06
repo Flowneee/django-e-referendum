@@ -2,6 +2,7 @@
 settings.py
 *.sqlite3
 staticfiles/
+00*_*.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
