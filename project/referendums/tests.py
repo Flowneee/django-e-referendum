@@ -1,5 +1,7 @@
 from django.test import TestCase
 from .models import Referendum
+from .views import search_referendums
+from users.models import User
 
 # Create your tests here.
 

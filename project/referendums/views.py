@@ -4,6 +4,7 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
+from django.db.models import Q
 
 from .models import *
 from users.models import User
@@ -13,7 +14,7 @@ from project.settings import DEBUG
 
 
 class IndexView(TemplateView):
-    template_name = 'referendums/referendum_short.html'
+    template_name = 'referendums/index.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -71,3 +72,27 @@ def add_vote(request, pk, decision):
         defaults={'result': a}
     )
     return redirect('/referendum/{0}'.format(pk))
+
+def search_referendums(patterns):
+    '''patterns - массив слов'''
+    patterns = patterns.split(' ')
+    q = Q()
+    for i in patterns:
+        q = q | Q(title__contains=i) | Q(question__contains=i)
+    print(q)
+    try:
+        x = Referendum.objects.filter(q)
+    except Referendum.DoesNotExist:
+        x = None
+    return x
+
+class SearchReferendumView(TemplateView):
+    template_name = 'referendums/search.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchReferendumView, self).get_context_data(**kwargs)
+        p = self.request.GET.get('pattern')
+        context['ref_list'] = search_referendums(p)
+        if DEBUG == True:
+            print(context['ref_list'])
+        return context
