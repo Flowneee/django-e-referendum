@@ -1,5 +1,5 @@
 #My own rules
-settings.py
+private_settings.py
 *.sqlite3
 staticfiles/
 00*_*.py
