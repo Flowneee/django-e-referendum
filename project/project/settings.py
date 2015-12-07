@@ -19,7 +19,7 @@ be declared in an external file.
 import os
 from django.core.urlresolvers import reverse_lazy
 
-import private_settings as ps
+import project.private_settings as ps
 
 BASE_DIR = ps.BASE_DIR
 
@@ -55,7 +55,7 @@ INSTALLED_APPS = (
 
     'debug_toolbar',
     'mmc',
-    'django_extensions',
+    #'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -169,3 +169,5 @@ STATICFILES_DIRS = (
 AUTH_USER_MODEL = 'users.User'
 
 LOGIN_REDIRECT_URL = reverse_lazy('index')
+
+SITE_ID = 1
