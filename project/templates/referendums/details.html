@@ -5,6 +5,9 @@
 {% block content_block %}
   <div class="col-xs-4 col-xs-offset-3">
     <h1>{{ referendum.title }}</h1>
+    <h4>{% trans 'Создан' %} {{ referendum.datetime_created }}</h4>
+    <h4>{% trans 'Автор' %}: {{ referendum.initiator.get_short_name }}</h4>
+    <h4>{% trans 'Область проведения' %}: {{ referendum.top_address }}</h4>
     {{ referendum.question }}
     <div style="margin-top: 10px;">
       {% if not referendum.is_over %}

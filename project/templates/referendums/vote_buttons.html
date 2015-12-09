@@ -1,46 +1,18 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
+
 {% block vote_buttons_block %}
   {% if user.is_authenticated %}
     {% if user.is_approved %}
-      {% if user_vote == None %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/agree/"    style="display:inline-block;">
+      <form class="" method="post" action="/referendum/{{ referendum.id }}/for/ " style="display:inline-block;">
         {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg" type="submit" value=" {%  trans 'Согласен' %}">
+        <input class="btn btn-default btn-success btn-lg vote-button btn-for" type="submit" value="{%  trans 'За' %}" id="btn-for">
       </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/disagree/"  style="display:inline-block; margin-left: 5px;">
+      <form class="" method="post" action="/referendum/{{ referendum.id }}/against/" style="display:inline-block; margin-left: 5px;">
         {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg" type="submit" value="  {%  trans 'Не согласен' %}">
+        <input class="btn btn-default btn-danger btn-lg vote-button btn-against" type="submit" value="{%  trans 'Против' %}" id="btn-against">
       </form>
-      {% elif user_vote.result == 'y' %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/agree/"    style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg" type="submit" value=" {%  trans 'Согласен' %}">
-      </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/disagree/"  style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg" type="submit" value="{%  trans 'Не согласен' %}" style="opacity: 0.65;">
-      </form>
-      {% elif user_vote.result == 'n' %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/agree/"    style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg" type="submit" value=" {%  trans 'Согласен' %}" style="opacity: 0.65;">
-      </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/disagree/"  style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg" type="submit" value="  {%  trans 'Не согласен' %}">
-      </form>
-      {% else %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/agree/"    style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg" type="submit" value=" {%  trans 'Согласен' %}">
-      </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/disagree/"  style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg" type="submit" value="  {%  trans 'Не согласен' %}">
-      </form>
-      {% endif %}
     {% else %}
       <div class="alert alert-warning">
         <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, ваша учетная запись должна быть подтверждена администратором.' %}
@@ -51,4 +23,24 @@
       <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, необходимо зарегистрироваться.' %}
     </div>
   {% endif %}
+
+  <script type="text/javascript">
+    function setVoteButtonsState() {
+        if (('{{ user.is_authenticated|safe }}' == '{{ user.is_approved|safe }}') && ('{{ user.is_authenticated|safe }}' == 'True')) {
+            if ('{{ user_vote.result }}' == 'y') {
+                $("#btn-for").fadeTo( "fast" , 0.65, function() {});
+            };
+            if ('{{ user_vote.result }}' == 'n') {
+                $("#btn-against").fadeTo( "fast" , 0.65, function() {});
+            };
+        };
+    };
+    setVoteButtonsState();
+  </script>
+  <script type="text/javascript" src="/static/js/details.js"></script>
+  
+
+
+
+
 {% endblock vote_buttons_block %}

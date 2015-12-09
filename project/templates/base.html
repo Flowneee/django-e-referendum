@@ -27,9 +27,9 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <form class="navbar-form pull-right" method="get" action="/results/">
-              <input type="text" class="form-control" id="search-field" placeholder="Поиск">
-              <button type="submit" class="btn btn-default">Поиск</button>
+            <form class="navbar-form pull-right" method="get" action="{% url 'search' %}">
+              <input type="text" class="form-control" name="pattern" placeholder="Поиск" />
+              <button type="submit" class="btn btn-default">{% trans 'Поиск' %}</button>
             </form>
             {% if user.is_authenticated %}
               <li class="navbar-text">{% trans 'Добро пожаловать'  %}, {{ user.get_short_name }}</li>

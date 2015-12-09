@@ -48,14 +48,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
 
     'users',
     'referendums',
 
     'debug_toolbar',
     'mmc',
-    #'django_extensions',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -157,7 +157,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (
@@ -170,4 +169,4 @@ AUTH_USER_MODEL = 'users.User'
 
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 
-SITE_ID = 1
+# SITE_ID = 1

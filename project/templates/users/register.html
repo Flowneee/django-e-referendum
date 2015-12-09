@@ -18,12 +18,19 @@
       <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
+        <div class="alert alert-warning">
+          <strong>{% trans 'Внимание!' %}</strong> {% trans 'Прежде чем вы сможете начать голосовать, создавать референдумы и проявлять иную активность, администратор должен подтвердить вашу учетную запись (это займет некоторое время).' %}
+        </div>
+        <div class="checkbox">
+          <label class="checkbox"><input type="checkbox" value="" id="i-got-it">{% trans 'Я все понял, зарегистрируйте меня.' %}</label>
+        </div>
         {% buttons %}
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary" id="reg" disabled="true">
             {% trans 'Зарегестрироваться' %}
           </button>
         {% endbuttons %}
       </form>
     {% endif %}
   </div>
+  <script type="text/javascript" src="/static/js/register.js"></script>
 {% endblock %}
