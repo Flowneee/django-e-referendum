@@ -48,7 +48,7 @@ class BirthDateValidator(object):
 class UserManager(BaseUserManager):
 
     def _create_user(self, first_name, last_name, passport_id, birth_date,
-                     address, password, is_staff, is_superuser,
+                     address, password, is_staff, is_superuser, is_approved,
                      **extra_fields):
         now = timezone.now()
         if not passport_id:
@@ -66,6 +66,7 @@ class UserManager(BaseUserManager):
                           passport_id=passport_id, birth_date=birth_date,
                           address=address,
                           is_staff=is_staff, is_active=True,
+                          is_approved=is_approved,
                           is_superuser=is_superuser, last_login=now,
                           date_joined=now, **extra_fields)
         user.set_password(password)
@@ -83,7 +84,7 @@ class UserManager(BaseUserManager):
         return self._create_user('Чак', 'Норрис', passport_id,
                                  '1940-03-10',
                                  'Ты шо сука, тебе интересно, может тебе с вертухи переебать?',
-                                 password, True, True,
+                                 password, True, True, True,
                                  **extra_fields)
 
 
