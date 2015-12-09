@@ -61,9 +61,9 @@ def add_vote(request, pk, decision):
     r = Referendum.objects.get(id=pk)
     u = User.objects.get(id=request.user.id)
     a = 'u'
-    if (decision == 'agree'):
+    if (decision == 'for'):
         a = 'y'
-    elif (decision == 'disagree'):
+    elif (decision == 'against'):
         a = 'n'
     obj, created = Vote.objects.update_or_create(
         referendum=r,
