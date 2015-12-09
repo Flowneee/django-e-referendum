@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
 
 {% block content_block %}
   <div class="col-xs-4 col-xs-offset-3">
     {% for ref in ref_list %}
       {% include 'referendums/referendum_short.html' %}
     {% empty %}
-      <li>No refs yet.</li>
+      <h2>{% trans 'Пустота' %}</h2>
     {% endfor %}
   </div>
   <div class="col-xs-2">

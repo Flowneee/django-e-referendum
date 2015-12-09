@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q
 
+import re
+
 from .models import *
 from users.models import User
 from project.settings import DEBUG
@@ -73,12 +75,21 @@ def add_vote(request, pk, decision):
     )
     return redirect('/referendum/{0}'.format(pk))
 
+
 def search_referendums(patterns):
     '''patterns - массив слов'''
     patterns = patterns.split(' ')
     q = Q()
     for i in patterns:
-        q = q | Q(title__contains=i) | Q(question__contains=i)
+        # workaround for case insensitive search in cyrillic
+        if re.match('[а-яА-Я]+', i):
+            q = q | Q(title__contains=i) | Q(question__contains=i)
+            i = i.lower()
+            q = q | Q(title__contains=i) | Q(question__contains=i)
+            i = i[0].upper() + i[1:]
+            q = q | Q(title__contains=i) | Q(question__contains=i)
+        else:
+            q = q | Q(title__icontains=i) | Q(question__icontains=i)
     print(q)
     try:
         x = Referendum.objects.filter(q)
@@ -86,13 +97,14 @@ def search_referendums(patterns):
         x = None
     return x
 
+
 class SearchReferendumView(TemplateView):
     template_name = 'referendums/search.html'
 
     def get_context_data(self, **kwargs):
         context = super(SearchReferendumView, self).get_context_data(**kwargs)
-        p = self.request.GET.get('pattern')
-        context['ref_list'] = search_referendums(p)
-        if DEBUG == True:
+        context['pattern'] = self.request.GET.get('pattern')
+        context['ref_list'] = search_referendums(context['pattern'])
+        if DEBUG is True:
             print(context['ref_list'])
         return context

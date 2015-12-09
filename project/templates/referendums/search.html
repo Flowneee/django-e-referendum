@@ -4,10 +4,12 @@
 
 {% block content_block %}
   <div class="col-xs-4 col-xs-offset-3">
+  <h2>{% trans 'Результаты поиска по запросу' %} "{{ pattern }}":</h2>
     {% for ref in ref_list %}
       {% include 'referendums/referendum_short.html' %}
     {% empty %}
-      <li>{% trans 'Ничего не найдено.' %}</li>
+      <h3>{% trans 'Ничего не найдено.' %}</h3>
+      <a href="{% url 'index' %}">{% trans 'Вернуться на главную страницу'%}</a>
     {% endfor %}
   </div>
   <div class="col-xs-2">
