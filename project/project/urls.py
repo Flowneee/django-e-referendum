@@ -21,6 +21,7 @@ from users.views import *
 from referendums.views import *
 
 urlpatterns = [
+    url(r'^404/$', 'django.views.defaults.page_not_found'),
     url(r'^login/$', 'django.contrib.auth.views.login',
         {'template_name': 'users/login.html'}, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout',
@@ -35,5 +36,4 @@ urlpatterns = [
 if settings.DEBUG:
     import debug_toolbar
     urlpatterns += patterns('',
-                            url(r'^__debug__/', include(debug_toolbar.urls)),
-    )
+                            url(r'^__debug__/', include(debug_toolbar.urls)),)

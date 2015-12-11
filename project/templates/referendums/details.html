@@ -13,14 +13,7 @@
       {% if not referendum.is_over %}
         {% include 'referendums/vote_buttons.html' %}
       {% else %}
-        <div class="panel panel-default">
-          <div class="panel-header">
-            <strong>{% trans 'Итог' %}</strong>
-          </div>
-          <div class="panel-body">
-            {{ object.result }}
-          </div>
-        </div>
+        <h3><strong>{% trans 'Итог' %}</strong>: {{ referendum.result }}</h3>
       {% endif %}
     </div>
   </div>

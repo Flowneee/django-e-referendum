@@ -1,3 +1,6 @@
-from mmc.mixins import inject_management
+from project.settings import DEBUG
 
-inject_management()
+if DEBUG:
+    from mmc.mixins import inject_management
+
+    inject_management()
