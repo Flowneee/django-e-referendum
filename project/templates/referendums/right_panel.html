@@ -12,5 +12,15 @@
     {% endif %}
   {% else %}
     <input type="submit" value="{% trans 'Организовать референдум' %}" id="go_to_create_ref" class="btn btn-danger btn-lg btn-block disabled" title="{% trans 'Для организации референдума необохдимо зарегистрироваться' %}"></input>
-  {% endif %}   
+  {% endif %}
+  <h2>{% trans 'Завершенные инициативы' %}:</h2> 
+  {% for ref in ended_ref_list %}
+    <div class="panel panel-default">
+    <div class="panel-body">
+      <a href='/referendum/{{ ref.pk }}'>{{ ref.title }}</a>
+      {% trans 'Автор' %}: {{ ref.initiator.get_short_name }}
+      <strong>{% trans 'Итог' %}</strong>: {{ ref.result }}
+    </div>
+  </div>
+  {% endfor %}
 </div>
