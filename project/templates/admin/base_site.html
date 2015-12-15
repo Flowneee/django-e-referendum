@@ -1,11 +1,11 @@
-{% extends "admin:admin/base_site.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n %}
 
 {% block extrahead %}
 {% endblock %}
 
-{% block title %}{{ title }} | {% trans "Система электронного референдума" %}{% endblock %}
+{% block title %}{% trans "Администрирование" %} | {% trans "Система электронного референдума" %}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{% trans "Система электронного референдума" %}</h1>
+<a class="navbar-brand" href="{% url 'admin:index' %}">{% trans "Система электронного референдума" %}</a>
 {% endblock %}
