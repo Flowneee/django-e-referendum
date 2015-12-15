@@ -1,13 +1,26 @@
 from django.contrib import admin
-from referendums.models import Vote, Referendum, Question
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.forms import TextInput, Textarea
 
+from nested_inline.admin import NestedStackedInline, NestedModelAdmin
+
+from referendums.models import Vote, Referendum, Question, Answer
+
 # Register your models here.
 
 
-class QuestionsInline(admin.TabularInline):
+class AnswersInline(NestedStackedInline):
+    model = Answer
+    extra = 0
+    readonly_fields = ('id', )
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '30'})},
+        models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 35})},
+    }
+
+
+class QuestionsInline(NestedStackedInline):
     model = Question
     extra = 0
     readonly_fields = ('id', )
@@ -15,6 +28,8 @@ class QuestionsInline(admin.TabularInline):
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 35})},
     }
+
+    inlines = [AnswersInline]
 
 
 class VoteAdmin(admin.ModelAdmin):
@@ -50,7 +65,7 @@ class VoteAdmin(admin.ModelAdmin):
     ordering = ('datetime_created',)
 
 
-class ReferendumAdmin(admin.ModelAdmin):
+class ReferendumAdmin(NestedModelAdmin):
 
     def get_title_string(self, obj):
         return str(obj.title)
@@ -99,5 +114,12 @@ class ReferendumAdmin(admin.ModelAdmin):
     ordering = ('datetime_created',)
 
 
+class QuestionAdmin(NestedModelAdmin):
+    inlines = [
+        AnswersInline,
+    ]
+
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Answer)
 admin.site.register(Vote, VoteAdmin)
 admin.site.register(Referendum, ReferendumAdmin)

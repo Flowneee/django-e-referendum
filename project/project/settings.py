@@ -43,6 +43,8 @@ INSTALLED_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'django_admin_bootstrapped',
+    'nested_inline',
+
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -92,6 +94,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
+
+DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
 
 if DEBUG:
     MIDDLEWARE_CLASSES += (
