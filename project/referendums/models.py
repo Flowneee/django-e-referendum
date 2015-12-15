@@ -8,7 +8,6 @@ from django.utils import timezone
 class Referendum(models.Model):
 
     title = models.TextField(verbose_name=_('Название'), max_length=200)
-    question = models.TextField(verbose_name=_('Содержание'))
     result = models.TextField(verbose_name=_('Итоговое решение'), blank=True)
     initiator = models.ForeignKey(
         'users.User',
@@ -24,24 +23,8 @@ class Referendum(models.Model):
     def __str__(self):
         return str(self.title)
 
-    def get_short_question(self):
-        if len(str(self.question)) <= 400:
-            return str(self.question)[0:len(str(self.question))]
-        else:
-            return str(self.question)[0:400]
-
     def get_absolute_url(self):
         return '/referendum/{0}/'.format(self.id)
-
-    def _agree_votes_number(self):
-        return len(self.ref_votes.filter(result='y'))
-    _agree_votes_number.short_description = _('За')
-    agree_votes_number = property(_agree_votes_number)
-
-    def _disagree_votes_number(self):
-        return len(self.ref_votes.filter(result='n'))
-    _disagree_votes_number.short_description = _('Против')
-    disagree_votes_number = property(_disagree_votes_number)
 
     class Meta:
 
@@ -53,7 +36,7 @@ class Vote(models.Model):
 
     referendum = models.ForeignKey(
         'Referendum',
-        verbose_name=_('Ответ на'),
+        verbose_name=_('Отвечен в'),
         related_name='ref_votes',
         on_delete=models.CASCADE,
     )
@@ -63,13 +46,17 @@ class Vote(models.Model):
         related_name='user_votes',
         on_delete=models.PROTECT,
     )
-
-    CHOICES = [('y', _('Да')), ('n', _('Нет')), ('u', _('Не знаю'))]
-    result = models.CharField(
+    question = models.ForeignKey(
+        'Question',
+        verbose_name=_('Ответ на'),
+        related_name='question_votes',
+        on_delete=models.PROTECT,
+    )
+    answer = models.ForeignKey(
+        'Answer',
         verbose_name=_('Ответ'),
-        choices=CHOICES,
-        default='u',
-        max_length=1
+        related_name='answer_votes',
+        on_delete=models.PROTECT,
     )
     datetime_created = models.DateTimeField(
         verbose_name=_('Проголосовал'),
@@ -77,11 +64,81 @@ class Vote(models.Model):
     )
 
     def __str__(self):
-        return str(self.get_result_display())
+        return str(self.answer)
 
     class Meta:
 
         verbose_name = _('Голос')
         verbose_name_plural = _('Голоса')
 
+        # голос уникальный для реерендума и юзера
         unique_together = (('referendum', 'user'),)
+
+
+class Question(models.Model):
+
+    title = models.TextField(verbose_name=_('Название'), max_length=200)
+    text = models.TextField(verbose_name=_('Вопрос'))
+    user = models.ForeignKey(
+        'users.User',
+        verbose_name=_('Автор'),
+        related_name='user_questions',
+    )
+    referendum = models.ForeignKey(
+        'Referendum',
+        verbose_name=_('Референдум'),
+        related_name='referendum_questions',
+        on_delete=models.CASCADE,
+    )
+    datetime_created = models.DateTimeField(
+        verbose_name=_('Создан'),
+        default=timezone.now
+    )
+
+    def get_short_text(self):
+        if len(str(self.text)) <= 100:
+            return str(self.text)[0:len(str(self.question))]
+        else:
+            return str(self.text)[0:100]
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+
+        verbose_name = _('Вопрос')
+        verbose_name_plural = _('Вопросы')
+
+
+class Answer(models.Model):
+
+    label = models.CharField(verbose_name=_('Метка'), max_length=50)
+    comment = models.TextField(verbose_name=_('Комментарий'))
+    STYLE = [
+        ('btn-default', _('Обычный')),
+        ('btn-primary', _('Основной')),
+        ('btn-success', _('Удача')),
+        ('btn-info', _('Инфо')),
+        ('btn-warning', _('Предупреждение')),
+        ('btn-danger', _('Опасность')),
+    ]
+    style = models.CharField(
+        verbose_name=_('Стиль'),
+        max_length=12,
+        choices=STYLE,
+        default='btn-primary',
+    )
+    question = models.ForeignKey(
+        'Question',
+        verbose_name=_('Вопрос'),
+        related_name='question_answers',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.label
+    
+    class Meta:
+
+        verbose_name = _('Ответ')
+        verbose_name_plural = _('Ответы')
