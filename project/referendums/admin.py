@@ -14,6 +14,7 @@ class AnswersInline(NestedStackedInline):
     model = Answer
     extra = 0
     readonly_fields = ('id', )
+    fk_name = 'question'
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 35})},
@@ -24,12 +25,15 @@ class QuestionsInline(NestedStackedInline):
     model = Question
     extra = 0
     readonly_fields = ('id', )
+    fk_name = 'referendum'
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
         models.TextField: {'widget': Textarea(attrs={'rows': 4, 'cols': 35})},
     }
 
-    inlines = [AnswersInline]
+    inlines = [
+        AnswersInline,
+    ]
 
 
 class VoteAdmin(admin.ModelAdmin):
@@ -49,8 +53,7 @@ class VoteAdmin(admin.ModelAdmin):
             'fields': ('user',
                        'referendum',
                        'question',
-                       'answer',)},
-        ),
+                       'answer',)},),
     )
 
     readonly_fields = ('id', )
@@ -61,7 +64,7 @@ class VoteAdmin(admin.ModelAdmin):
     list_display = ('id', 'referendum', 'question', 'answer',
                     'user', 'datetime_created',)
     search_fields = ('id', 'referendum', 'question', 'answer',
-                    'user', 'datetime_created',)
+                     'user', 'datetime_created',)
     ordering = ('datetime_created',)
 
 
@@ -80,44 +83,90 @@ class ReferendumAdmin(NestedModelAdmin):
         (_('Информация о референдуме'), {'fields': (
                                             'id',
                                             'title',
+                                            'comment',
                                             'is_over',
                                             'result',
                                             'initiator',
                                             'top_address',
                                             'datetime_created',
+                                            'is_ready',
+                                            'is_moderated',
                                             )}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
             'fields': ('title',
+                       'comment',
                        'question',
                        'is_over',
                        'result',
                        'initiator',
                        'top_address',
-                       'datetime_created',)},),
+                       'datetime_created',
+                       'is_ready',
+                       'is_moderated',)},),
     )
 
     inlines = [
         QuestionsInline,
     ]
     readonly_fields = ('id', 'get_title_string')
+
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
     }
 
     list_display = ('id', 'title', 'is_over',
                     'result', 'initiator', 'datetime_created',)
+    list_filter = ('is_ready', 'is_moderated', 'is_over', )
     search_fields = ('id', 'title', 'result', 'initiator', 'datetime_created',
-                     'is_over',)
+                     'is_over', 'is_ready', 'is_moderated', )
     ordering = ('datetime_created',)
 
 
 class QuestionAdmin(NestedModelAdmin):
+
+    def get_title_string(self, obj):
+        return str(obj.title)
+    get_title_string.allow_tags = True
+    get_title_string.short_description = _('Название')
+
+    fieldsets = (
+        (None, {'fields': ('id', 'get_title_string',
+                           )}),
+        (_('Информация о вопросе'), {'fields': (
+                                            'id',
+                                            'title',
+                                            'text',
+                                            'user',
+                                            'referendum',
+                                            'datetime_created',)}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('title',
+                       'text',
+                       'user',
+                       'referendum',
+                       'datetime_created',)},),
+    )
+
+    readonly_fields = ('id', 'get_title_string')
+    formfield_overrides = {
+        models.CharField: {'widget': TextInput(attrs={'size': '30'})},
+    }
+
     inlines = [
         AnswersInline,
     ]
+
+    list_display = ('id', 'title', 'text', 'user',
+                    'referendum', 'datetime_created',)
+    search_fields = ('id', 'title', 'text', 'user',
+                     'referendum',)
+    ordering = ('datetime_created',)
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Answer)

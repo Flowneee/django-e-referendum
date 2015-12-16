@@ -46,7 +46,6 @@ class UserAdmin(auth.UserAdmin):
 
     def full_name(self, obj):
         return obj.get_full_name()
-
     full_name.allow_tags = True
     full_name.short_description = _('Полное имя')
     add_fieldsets = (

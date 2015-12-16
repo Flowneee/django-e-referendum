@@ -8,6 +8,7 @@ from django.utils import timezone
 class Referendum(models.Model):
 
     title = models.TextField(verbose_name=_('Название'), max_length=200)
+    comment = models.TextField(verbose_name=_('Описание'))
     result = models.TextField(verbose_name=_('Итоговое решение'), blank=True)
     initiator = models.ForeignKey(
         'users.User',
@@ -19,6 +20,10 @@ class Referendum(models.Model):
         default=timezone.now
     )
     is_over = models.BooleanField(verbose_name=_('Закончен'), default=False)
+    is_ready = models.BooleanField(verbose_name=_('Готов к проверке'),
+                                   default=False)
+    is_moderated = models.BooleanField(verbose_name=_('Проверен модератором'),
+                                       default=False)
 
     def __str__(self):
         return str(self.title)
@@ -44,19 +49,16 @@ class Vote(models.Model):
         'users.User',
         verbose_name=_('Пользователь'),
         related_name='user_votes',
-        on_delete=models.PROTECT,
     )
     question = models.ForeignKey(
         'Question',
         verbose_name=_('Ответ на'),
         related_name='question_votes',
-        on_delete=models.PROTECT,
     )
     answer = models.ForeignKey(
         'Answer',
         verbose_name=_('Ответ'),
         related_name='answer_votes',
-        on_delete=models.PROTECT,
     )
     datetime_created = models.DateTimeField(
         verbose_name=_('Проголосовал'),
@@ -71,8 +73,8 @@ class Vote(models.Model):
         verbose_name = _('Голос')
         verbose_name_plural = _('Голоса')
 
-        # голос уникальный для реерендума и юзера
-        unique_together = (('referendum', 'user'),)
+        # голос уникальный для вопроса и юзера
+        unique_together = (('question', 'user'),)
 
 
 class Question(models.Model):
@@ -134,10 +136,18 @@ class Answer(models.Model):
         related_name='question_answers',
         on_delete=models.CASCADE,
     )
+    user = models.ForeignKey(
+        'users.User',
+        verbose_name=_('Автор'),
+        related_name='user_answers',
+    )
 
     def __str__(self):
         return self.label
-    
+
+    def get_votes_number(self):
+        return len(Vote.objects.filter(answer=self))
+
     class Meta:
 
         verbose_name = _('Ответ')

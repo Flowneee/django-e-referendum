@@ -17,6 +17,7 @@ be declared in an external file.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import django
 from django.core.urlresolvers import reverse_lazy
 
 import project.private_settings as ps
@@ -53,9 +54,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'jquery',
+    'djangoformsetjs',
+
     'users',
     'referendums',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,6 +74,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'project.urls'
+
+LOADERS = [
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+]
+if django.__version__ < '1.9':
+    LOADERS = ['app_namespace.Loader', ] + LOADERS
 
 TEMPLATES = [
     {
@@ -85,10 +97,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-            ],
+            'loaders': LOADERS
         },
     },
 ]

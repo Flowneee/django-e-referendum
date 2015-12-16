@@ -3,26 +3,37 @@
 
 
 {% block vote_buttons_block %}
-  {% if user.is_authenticated %}
-    {% if user.is_approved %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/for/ " style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg vote-button btn-for" type="submit" value="{%  trans 'За' %}" id="btn-for">
-      </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/against/" style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg vote-button btn-against" type="submit" value="{%  trans 'Против' %}" id="btn-against">
-      </form>
-    {% else %}
-      <div class="alert alert-warning">
-        <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, ваша учетная запись должна быть подтверждена администратором.' %}
-      </div>
-    {% endif %}
-  {% else %}
-    <div class="alert alert-warning">
-      <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, необходимо зарегистрироваться.' %}
-    </div>
-  {% endif %}
+  <table class="table" style="width:auto;">
+    {% for answer in question.question_answers.all %}
+      <tr>
+        <td>
+          <form class="" method="post" action="/referendum/{{ referendum.id}}/{{ question.id }}/{{ answer.id }}/" style="display:inline-block;">
+            {% csrf_token %}
+            <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}">
+          </form>
+        </td>
+        <td>
+          <strong>{% trans 'Голосов' %}</strong>: {{ answer.get_votes_number }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if referendum.is_ready == False %}
+        <div class="row" style="margin-top: 10px; margin-left: 10px;">
+          <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
+            <div class="panel-heading">
+              {% trans 'Создать новый ответ' %}
+            </div>
+            <div class="panel-body">
+              <form class="form" role="form" action="/create/{{ referendum.id }}/{{ question.id }}/" method ="post">
+                {% csrf_token %}
+                {% bootstrap_form answer_form %}
+                <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать ответ' %}</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endif %}
 
   <script type="text/javascript">
     function setVoteButtonsState() {
@@ -38,9 +49,4 @@
     setVoteButtonsState();
   </script>
   <script type="text/javascript" src="/static/js/details.js"></script>
-  
-
-
-
-
 {% endblock vote_buttons_block %}
