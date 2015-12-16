@@ -34,19 +34,4 @@
           </div>
         </div>
         {% endif %}
-
-  <script type="text/javascript">
-    function setVoteButtonsState() {
-        if (('{{ user.is_authenticated|safe }}' == '{{ user.is_approved|safe }}') && ('{{ user.is_authenticated|safe }}' == 'True')) {
-            if ('{{ user_vote.result }}' == 'y') {
-                $("#btn-for").fadeTo( "fast" , 0.65, function() {});
-            };
-            if ('{{ user_vote.result }}' == 'n') {
-                $("#btn-against").fadeTo( "fast" , 0.65, function() {});
-            };
-        };
-    };
-    setVoteButtonsState();
-  </script>
-  <script type="text/javascript" src="/static/js/details.js"></script>
 {% endblock vote_buttons_block %}

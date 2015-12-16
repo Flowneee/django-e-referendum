@@ -54,8 +54,7 @@ class UserAdmin(auth.UserAdmin):
             'fields': ('passport_id', 'last_name', 'first_name',
                        'patronymic', 'email', 'birth_date',
                        'is_approved', 'is_staff', 'is_superuser',
-                       'address', 'password1', 'password2')},
-        ),
+                       'address', 'password1', 'password2')},),
     )
     form = UserChangeForm
     add_form = UserCreationForm

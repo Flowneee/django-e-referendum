@@ -54,9 +54,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'jquery',
-    'djangoformsetjs',
-
     'users',
     'referendums',
 )
