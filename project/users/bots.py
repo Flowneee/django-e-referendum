@@ -1,6 +1,9 @@
 from random import randint
 from datetime import datetime
 
+from referendums.models import *
+from users.models import User
+
 FN = ['Андрей', 'Артем', 'Алексей', 'Александр', 'Виталий', 'Борис', 'Виктор',
       'Николай', 'Евгений', 'Владислав', 'Никита', 'Илья']
 LN = ['Иванов', 'Петров', 'Сидоров', 'Смирнов', 'Иванов', 'Кузнецов',
@@ -13,8 +16,7 @@ PN = ['Ааронович', 'Абрамович', 'Августович', 'Ав�
       'Антонович', 'Ануфриевич', 'Арсенович', 'Арсеньевич']
 
 
-def create_bot(model, passport_id):
-
+def create_bot(passport_id):
     fn = FN[randint(0, len(FN)-1)]
     ln = LN[randint(0, len(LN)-1)]
     pn = PN[randint(0, len(PN)-1)]
@@ -22,7 +24,7 @@ def create_bot(model, passport_id):
     month = randint(1, 12)
     day = randint(1, 28)
     birth_date = datetime(year, month, day)
-    u = model(
+    u = User(
         first_name=fn, last_name=ln, patronymic=pn,
         passport_id=str(passport_id).zfill(10),
         birth_date=birth_date,
@@ -30,3 +32,22 @@ def create_bot(model, passport_id):
     )
     u.save()
     return u
+
+
+def bot_vote(bot):
+    for q in Question.objects.all():
+        a = q.question_answers.all()
+        a = a[randint(0, len(a)-1)]
+        Vote.objects.create(
+            referendum=q.referednum,
+            question=q,
+            answer=a,
+            user=bot
+        )
+
+
+
+def bots_vote():
+    for i in range(1, 10000):
+        u = create_bot(i)
+        bot_vote(u)
