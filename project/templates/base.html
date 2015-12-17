@@ -12,6 +12,7 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="/static/css/referendums.css">
     {% block extrahead_block %}{% endblock %}
     <title>
       {% trans 'Система электронного референдума' %} - 
@@ -49,5 +50,7 @@
     <div class="container-fluid" style="padding-top: 60px;">
       {% block content_block %}{% endblock %}
     </div>
+
+    {% block script_block %}{% endblock %}
   </body>
 </html>

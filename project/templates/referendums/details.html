@@ -3,25 +3,86 @@
 {% load bootstrap3 %}
 
 {% block content_block %}
-  <div class="col-xs-4 col-xs-offset-3">
-    <h1>{{ referendum.title }}</h1>
-    <h4>{% trans 'Создан' %} {{ referendum.datetime_created }}</h4>
-    <h4>{% trans 'Автор' %}: {{ referendum.initiator.get_short_name }}</h4>
-    <h4>{% trans 'Область проведения' %}: {{ referendum.top_address }}</h4>
-    {{ referendum.question }}
-    <div style="margin-top: 10px;">
-      {% if not referendum.is_over %}
-        {% include 'referendums/vote_buttons.html' %}
-      {% else %}
-        <h3><strong>{% trans 'Итог' %}</strong>: {{ referendum.result }}</h3>
-      {% endif %}
+{% if referendum.is_moderated == False and referendum.initiator != user or referendum.is_moderated == False and user.is_staff != True %}
+  <h3>{% trans 'Ошибка, такого референдуума не существует.' %}</h3>
+  <a href="{% url 'index' %}">{% trans 'Вернуться на главную страницу'%}</a>
+{% else %}
+  <div class="col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
+    <div class="row">
+      <h1>{{ referendum.title }}</h1>
+      <h4>{% trans 'Создан' %} {{ referendum.datetime_created }}</h4>
+      <h4>{% trans 'Автор' %}: {{ referendum.initiator.get_short_name }}</h4>
+      <h4>{% trans 'Область проведения' %}: {{ referendum.top_address }}</h4>
+      {{ referendum.comment }}
     </div>
-  </div>
+    {% if referendum.is_ready == False %}
+    <div class="row" style="margin-top: 10px;">
+      <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
+        <div class="panel-heading">
+          {% trans 'Создать новый вопрос' %}
+        </div>
+        <div class="panel-body">
+          <form class="form" role="form" action="/create/{{ referendum.id }}/" method ="post">
+            {% csrf_token %}
+            {% bootstrap_form question_form %}
+            <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать вопрос' %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% for question in referendum.referendum_questions.all %}
+    <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="font-size: 16px;">
+          <strong>{% trans 'Вопрос' %}</strong>: {{ question.title }}
+        </div>
+        <div class="panel-body">
+          {{ question.text }}
+          {% if user.is_authenticated and user.is_approved and not referendum.is_over %}
+            <div style="margin-top: 10px;">
+              {% include 'referendums/vote_buttons.html' %}
+            </div> 
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% if not referendum.is_ready %}
+    <div class="row">
+      <div class="alert alert-danger" style="font-size: 16px;">
+        <strong>{% trans 'Внимание!' %}</strong> {% trans 'После нажатия этой кнопки вы не сможете больше редактировать рефереднум.' %}
+      </div>
+      <form class="form" role="form" action="/ready/{{ referendum.id }}/" method ="post">
+        {% csrf_token %}
+        <button class="btn btn-success btn-lg" style="margin-bottom: 10px;">{% trans 'Готово' %}</button>
+      </form>
+    </div>
+    {% endif %}
 
-  <div class="col-xs-2">
-    <h2>{% trans 'Голоса:' %}</h2>
-    <h3>{% trans 'За:' %} {{ for }}</h3> 
-    <h3>{% trans 'Против:' %} {{ against }}</h3>
+    {% if referendum.is_over %}
+      <div style="margin-top: 10px;">
+        <h3><strong>{% trans 'Итог' %}</strong>: {{ referendum.result }}</h3>
+      </div>
+    {% else %}
+      <div style="margin-top: 10px;">
+        {% if not user.is_authenticated %}
+          <div class="alert alert-warning">
+            <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того,  чтобпроголосовать, необходимо зарегистрироваться.' %}
+          </div>
+        {% else %}
+          {% if not user.is_approved %}
+            <div class="alert alert-warning">
+              <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для тогочтобы  проголосовать, необходимо зарегистрироваться.' %}
+            </div>
+          {% endif %}
+        {% endif %}
+        </div>
+    {% endif %}
   </div>
-
+{% endif %}
 {% endblock content_block %}
+
+{% block script_block %}
+  <script type="text/javascript" src="/static/js/details.js"></script>}
+{% endblock %}

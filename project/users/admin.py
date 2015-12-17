@@ -46,7 +46,6 @@ class UserAdmin(auth.UserAdmin):
 
     def full_name(self, obj):
         return obj.get_full_name()
-
     full_name.allow_tags = True
     full_name.short_description = _('Полное имя')
     add_fieldsets = (
@@ -55,8 +54,7 @@ class UserAdmin(auth.UserAdmin):
             'fields': ('passport_id', 'last_name', 'first_name',
                        'patronymic', 'email', 'birth_date',
                        'is_approved', 'is_staff', 'is_superuser',
-                       'address', 'password1', 'password2')},
-        ),
+                       'address', 'password1', 'password2')},),
     )
     form = UserChangeForm
     add_form = UserCreationForm
