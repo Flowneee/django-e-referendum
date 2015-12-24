@@ -2,16 +2,17 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
+{% block title_block %}{% trans 'Главная' %}{% endblock %}
 
 {% block content_block %}
-  <div class="col-xs-4 col-xs-offset-3">
+  <div class="col-md-8 col-md-offset-0 col-lg-5 col-lg-offset-2">
     {% for ref in ref_list %}
       {% include 'referendums/referendum_short.html' %}
     {% empty %}
       <h2>{% trans 'Пустота' %}</h2>
     {% endfor %}
   </div>
-  <div class="col-xs-2">
+  <div class="col-md-4 col-lg-3">
     {% include 'referendums/right_panel.html' %}
   </div>
 {% endblock content_block %}

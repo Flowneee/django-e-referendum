@@ -3,44 +3,54 @@
 
 
 {% block vote_buttons_block %}
-  {% if user.is_authenticated %}
-    {% if user.is_approved %}
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/for/ " style="display:inline-block;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-success btn-lg vote-button btn-for" type="submit" value="{%  trans 'За' %}" id="btn-for">
-      </form>
-      <form class="" method="post" action="/referendum/{{ referendum.id }}/against/" style="display:inline-block; margin-left: 5px;">
-        {% csrf_token %}
-        <input class="btn btn-default btn-danger btn-lg vote-button btn-against" type="submit" value="{%  trans 'Против' %}" id="btn-against">
-      </form>
-    {% else %}
-      <div class="alert alert-warning">
-        <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, ваша учетная запись должна быть подтверждена администратором.' %}
+  <table class="table" style="width:auto;">
+    {% for answer in question.question_answers.all %}
+      <tr>
+        <td>
+          {% if user.is_authenticated and user.is_approved and not referendum.is_over %}
+            <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="vote" />
+              <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+              <input type="hidden" name="question_id" value="{{ question.id }}" />
+              <input type="hidden" name="answer_id" value="{{ answer.id }}" />
+              <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}" title="{{ answer.comment }}">
+            </form>
+          {% else %}
+            <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}" disabled=true>
+          {% endif %}
+          {% if not referendum.is_ready and referendum.initiator == user or not referendum.is_ready and user.is_staff == True %}
+            <form class="form" method="get" action="{% url 'delete' %}" style="display: inline-block;">
+              <input type="hidden" name="type" value="answer" />
+              <input type="hidden" name="id" value="{{ answer.id }}" />
+              <input type="hidden" name="referendum_id" value="{{ question.referendum.id }}" />
+              <button type="submit" class="btn btn-link">{% trans 'Удалить' %}</button>
+            </form>
+          {% endif %}
+        </td>
+        <td align=center style="vertical-align: middle;">
+          <strong>{% trans 'Голосов' %}</strong>: {{ answer.get_votes_number }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% if not referendum.is_ready and referendum.initiator == user or not referendum.is_ready and user.is_staff == True %}
+    <div class="row" style="margin-top: 10px; margin-left: 10px;">
+      <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
+        <div class="panel-heading">
+          {% trans 'Создать новый ответ' %}
+        </div>
+        <div class="panel-body">
+          <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
+            {% csrf_token %}
+            {% bootstrap_form answer_form %}
+            <input type="hidden" name="type" value="answer" />
+            <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+            <input type="hidden" name="question_id" value="{{ question.id }}" />
+            <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать ответ' %}</button>
+          </form>
+        </div>
       </div>
-    {% endif %}
-  {% else %}
-    <div class="alert alert-warning">
-      <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, необходимо зарегистрироваться.' %}
     </div>
   {% endif %}
-
-  <script type="text/javascript">
-    function setVoteButtonsState() {
-        if (('{{ user.is_authenticated|safe }}' == '{{ user.is_approved|safe }}') && ('{{ user.is_authenticated|safe }}' == 'True')) {
-            if ('{{ user_vote.result }}' == 'y') {
-                $("#btn-for").fadeTo( "fast" , 0.65, function() {});
-            };
-            if ('{{ user_vote.result }}' == 'n') {
-                $("#btn-against").fadeTo( "fast" , 0.65, function() {});
-            };
-        };
-    };
-    setVoteButtonsState();
-  </script>
-  <script type="text/javascript" src="/static/js/details.js"></script>
-  
-
-
-
-
 {% endblock vote_buttons_block %}

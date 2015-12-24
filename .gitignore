@@ -1,6 +1,7 @@
 #My own rules
 private_settings.py
 *.sqlite3
+*.sqlite3-journal
 staticfiles/
 00*_*.py
 

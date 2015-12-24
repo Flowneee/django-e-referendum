@@ -12,9 +12,10 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="/static/css/referendums.css">
     {% block extrahead_block %}{% endblock %}
     <title>
-      {% trans 'Система электронного референдума' %} - 
+      {% trans 'Крым наш!' %} - 
       {% block title_block %}{% endblock %}
     </title>
   </head>
@@ -23,7 +24,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="{% url 'index' %}">{% trans 'Система электронного референдума' %}</a>
+          <a class="navbar-brand" href="{% url 'index' %}">{% trans 'Система электронного референдума "Крым наш!"' %}</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -33,10 +34,18 @@
             </form>
             {% if user.is_authenticated %}
               <li class="navbar-text">{% trans 'Добро пожаловать'  %}, {{ user.get_short_name }}</li>
-              {% if user.is_staff %}
-                <li><a href="/admin">{% trans 'Панель администратора'  %}</a></li>
-              {% endif %}
-              <li><a href="{% url 'logout' %}">{% trans 'Выход'  %}</a></li>
+              <div class="dropdown navbar-form" style="display: inline-block;">
+                <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">{% trans 'Меню' %}
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  {% if user.is_staff %}
+                    <li><a href="{% url 'index' %}">{% trans 'Главная'  %}</a></li>
+                    <li><a href="{% url 'my_referendums' %}">{% trans 'Мои референдумы'  %}</a></li>
+                    <li><a href="/admin">{% trans 'Панель администратора'  %}</a></li>
+                    <li><a href="{% url 'logout' %}">{% trans 'Выход'  %}</a></li>
+                  {% endif %}
+                </ul>
+              </div>
             {% else %}
               <li><a href="{% url 'register' %}">{% trans 'Регистрация' %}</a></li>
               <li><a href="{% url 'login' %}">{% trans 'Вход'  %}</a></li>
@@ -49,5 +58,7 @@
     <div class="container-fluid" style="padding-top: 60px;">
       {% block content_block %}{% endblock %}
     </div>
+
+    {% block script_block %}{% endblock %}
   </body>
 </html>

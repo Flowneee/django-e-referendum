@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
+{% block title_block %}{% trans 'Поиск' %}{% endblock %}
+
 {% block content_block %}
   <div class="col-xs-4 col-xs-offset-3">
   <h2>{% trans 'Результаты поиска по запросу' %} "{{ pattern }}":</h2>

@@ -1,13 +1,14 @@
 $(document).ready(function() {
-    setVoteButtonsWidth();
+    setButtonsWidth('.vote-button');
+    setButtonsWidth('.edit-ref-btn')
 });
 
 
-function setVoteButtonsWidth() {
-   $('.vote-button').width(
+function setButtonsWidth(btn_class) {
+   $(btn_class).width(
         Math.max.apply( 
             Math, 
-            $('.vote-button').map(function(){
+            $(btn_class).map(function(){
                 return $(this).width();
             }).get()
         )

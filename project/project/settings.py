@@ -17,6 +17,7 @@ be declared in an external file.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import django
 from django.core.urlresolvers import reverse_lazy
 
 import project.private_settings as ps
@@ -43,6 +44,8 @@ INSTALLED_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'django_admin_bootstrapped',
+    'nested_inline',
+
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,6 +57,7 @@ INSTALLED_APPS = (
     'users',
     'referendums',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -67,6 +71,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'project.urls'
+
+LOADERS = [
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+]
+if django.__version__ < '1.9':
+    LOADERS = ['app_namespace.Loader', ] + LOADERS
 
 TEMPLATES = [
     {
@@ -83,42 +94,14 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'loaders': [
-                'app_namespace.Loader',
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-            ],
+            'loaders': LOADERS
         },
     },
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
-# Debug Toolbar settings
-
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
-
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-]
-
-
-def show_toolbar(request):
-    if not request.is_ajax() and request.user and request.user.is_staff:
-        return True
-    return False
+DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
 
 if DEBUG:
     MIDDLEWARE_CLASSES += (
@@ -129,18 +112,42 @@ if DEBUG:
         'django_extensions',
         'mmc'
     )
+
+    # Debug Toolbar settings
     INTERNAL_IPS = ps.ALLOWED_HOSTS
     DEBUG_TOOLBAR_CONFIG = {
         'INTERCEPT_REDIRECTS': False,
         'SHOW_TOOLBAR_CALLBACK': 'project.settings.show_toolbar',
     }
 
-# Django extension settings
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
-GRAPH_MODELS = {
-  'all_applications': True,
-  'group_models': True,
-}
+    DEBUG_TOOLBAR_PANELS = [
+        'debug_toolbar.panels.versions.VersionsPanel',
+        'debug_toolbar.panels.timer.TimerPanel',
+        'debug_toolbar.panels.settings.SettingsPanel',
+        'debug_toolbar.panels.headers.HeadersPanel',
+        'debug_toolbar.panels.request.RequestPanel',
+        'debug_toolbar.panels.sql.SQLPanel',
+        'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+        'debug_toolbar.panels.templates.TemplatesPanel',
+        'debug_toolbar.panels.cache.CachePanel',
+        'debug_toolbar.panels.signals.SignalsPanel',
+        'debug_toolbar.panels.logging.LoggingPanel',
+        'debug_toolbar.panels.redirects.RedirectsPanel',
+    ]
+
+    def show_toolbar(request):
+        if not request.is_ajax() and request.user and request.user.is_staff:
+            return True
+        return False
+
+    # Django extension settings
+
+    GRAPH_MODELS = {
+      'all_applications': True,
+      'group_models': True,
+    }
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
