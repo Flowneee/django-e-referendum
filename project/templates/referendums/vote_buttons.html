@@ -7,10 +7,22 @@
     {% for answer in question.question_answers.all %}
       <tr>
         <td>
-          <form class="" method="post" action="/referendum/{{ referendum.id}}/{{ question.id }}/{{ answer.id }}/" style="display:inline-block;">
+          <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
             {% csrf_token %}
+            <input type="hidden" name="type" value="vote" />
+            <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+            <input type="hidden" name="question_id" value="{{ question.id }}" />
+            <input type="hidden" name="answer_id" value="{{ answer.id }}" />
             <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}">
           </form>
+          {% if referendum.is_ready == False %}
+            <form class="form" method="get" action="{% url 'delete' %}" style="display: inline-block;">
+              <input type="hidden" name="type" value="answer" />
+              <input type="hidden" name="id" value="{{ answer.id }}" />
+              <input type="hidden" name="referendum_id" value="{{ question.referendum.id }}" />
+              <button type="submit" class="btn btn-link">{% trans 'Удалить' %}</button>
+            </form>
+          {% endif %}
         </td>
         <td>
           <strong>{% trans 'Голосов' %}</strong>: {{ answer.get_votes_number }}
@@ -19,19 +31,22 @@
     {% endfor %}
   </table>
   {% if referendum.is_ready == False %}
-        <div class="row" style="margin-top: 10px; margin-left: 10px;">
-          <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
-            <div class="panel-heading">
-              {% trans 'Создать новый ответ' %}
-            </div>
-            <div class="panel-body">
-              <form class="form" role="form" action="/create/{{ referendum.id }}/{{ question.id }}/" method ="post">
-                {% csrf_token %}
-                {% bootstrap_form answer_form %}
-                <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать ответ' %}</button>
-              </form>
-            </div>
-          </div>
+    <div class="row" style="margin-top: 10px; margin-left: 10px;">
+      <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
+        <div class="panel-heading">
+          {% trans 'Создать новый ответ' %}
         </div>
-        {% endif %}
+        <div class="panel-body">
+          <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
+            {% csrf_token %}
+            {% bootstrap_form answer_form %}
+            <input type="hidden" name="type" value="answer" />
+            <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+            <input type="hidden" name="question_id" value="{{ question.id }}" />
+            <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать ответ' %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 {% endblock vote_buttons_block %}

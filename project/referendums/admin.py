@@ -51,12 +51,10 @@ class VoteAdmin(admin.ModelAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('user',
-                       'referendum',
-                       'question',
                        'answer',)},),
     )
 
-    readonly_fields = ('id', )
+    readonly_fields = ('id', 'referendum', 'question', )
     formfield_overrides = {
         models.CharField: {'widget': TextInput(attrs={'size': '50'})},
     }
@@ -78,8 +76,7 @@ class ReferendumAdmin(NestedModelAdmin):
     fieldsets = (
         (None, {'fields': ('id', 'get_title_string',
                            )}),
-        #(_('Голоса'), {'fields': ('agree_votes_number',
-        #                          'disagree_votes_number',)}),
+        #(_('Голоса'), {'fields': get_votes_fieldset}),
         (_('Информация о референдуме'), {'fields': (
                                             'id',
                                             'title',
@@ -118,7 +115,8 @@ class ReferendumAdmin(NestedModelAdmin):
     }
 
     list_display = ('id', 'title', 'is_over',
-                    'result', 'initiator', 'datetime_created',)
+                    'result', 'initiator', 'datetime_created',
+                    'is_ready', 'is_moderated', )
     list_filter = ('is_ready', 'is_moderated', 'is_over', )
     search_fields = ('id', 'title', 'result', 'initiator', 'datetime_created',
                      'is_over', 'is_ready', 'is_moderated', )

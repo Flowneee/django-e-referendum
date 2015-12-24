@@ -24,30 +24,39 @@ def create_bot(passport_id):
     month = randint(1, 12)
     day = randint(1, 28)
     birth_date = datetime(year, month, day)
-    u = User(
+    bot = User(
         first_name=fn, last_name=ln, patronymic=pn,
         passport_id=str(passport_id).zfill(10),
         birth_date=birth_date,
         address='Бот',
     )
-    u.save()
-    return u
+    bot.save()
+    return bot
 
 
-def bot_vote(bot):
-    for q in Question.objects.all():
+def bot_vote(bot, query):
+    for q in query:
         a = q.question_answers.all()
         a = a[randint(0, len(a)-1)]
         Vote.objects.create(
-            referendum=q.referednum,
+            referendum=q.referendum,
             question=q,
             answer=a,
             user=bot
         )
 
 
+def new_bots_vote(number):
+    query = Question.objects.all()
+    for i in range(1, number+1):
+        bot = create_bot(i)
+        bot_vote(bot, query)
+        print(bot, 'id', bot.id)
 
-def bots_vote():
-    for i in range(1, 10000):
-        u = create_bot(i)
-        bot_vote(u)
+
+def existing_bots_vote():
+    bots = User.objects.filter(address='Бот')
+    query = Question.objects.all()
+    for bot in bots:
+        bot_vote(bot, query)
+        print(bot, 'id', bot.id)

@@ -31,6 +31,16 @@ class Referendum(models.Model):
     def get_absolute_url(self):
         return '/referendum/{0}/'.format(self.id)
 
+    def get_short_comment(self):
+        if len(str(self.comment)) <= 400:
+            return str(self.comment)[0:len(str(self.comment))]
+        else:
+            return str(self.comment)[0:400]
+
+    @property
+    def user(self):
+        return self.initiator
+
     class Meta:
 
         verbose_name = _('Референдум')
@@ -67,6 +77,17 @@ class Vote(models.Model):
 
     def __str__(self):
         return str(self.answer)
+
+    def save(self, *args, **kwargs):
+        try:
+            self.question
+        except:
+            self.question = self.answer.question
+        try:
+            self.referendum
+        except:
+            self.referendum = self.question.referendum
+        super(Vote, self).save(*args, **kwargs)
 
     class Meta:
 

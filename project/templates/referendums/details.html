@@ -22,9 +22,11 @@
           {% trans 'Создать новый вопрос' %}
         </div>
         <div class="panel-body">
-          <form class="form" role="form" action="/create/{{ referendum.id }}/" method ="post">
+          <form class="form" role="form" action="{% url 'add' %}" method ="post">
             {% csrf_token %}
             {% bootstrap_form question_form %}
+            <input type="hidden" name="type" value="question" />
+            <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
             <button class="btn btn-primary" style="margin-bottom: 10px;">{% trans 'Создать вопрос' %}</button>
           </form>
         </div>
@@ -36,6 +38,14 @@
       <div class="panel panel-default">
         <div class="panel-heading" style="font-size: 16px;">
           <strong>{% trans 'Вопрос' %}</strong>: {{ question.title }}
+          {% if referendum.is_ready == False %}
+            <form class="form" method="get" action="{% url 'delete' %}" style="display: inline-block;">
+              <input type="hidden" name="type" value="question" />
+              <input type="hidden" name="id" value="{{ question.id }}" />
+              <input type="hidden" name="referendum_id" value="{{ question.referendum.id }}" />
+              <button type="submit" class="btn btn-link">{% trans 'Удалить' %}</button>
+            </form>
+          {% endif %}
         </div>
         <div class="panel-body">
           {{ question.text }}
@@ -51,12 +61,20 @@
     {% if not referendum.is_ready %}
     <div class="row">
       <div class="alert alert-danger" style="font-size: 16px;">
-        <strong>{% trans 'Внимание!' %}</strong> {% trans 'После нажатия этой кнопки вы не сможете больше редактировать рефереднум.' %}
+        <strong>{% trans 'Внимание!' %}</strong> {% trans 'После нажатия одной из этих кнопок вы не сможете больше редактировать референдум.' %}
       </div>
       <form class="form" role="form" action="/ready/{{ referendum.id }}/" method ="post">
         {% csrf_token %}
-        <button class="btn btn-success btn-lg" style="margin-bottom: 10px;">{% trans 'Готово' %}</button>
+        <button class="btn btn-success btn-lg edit-ref-btn" style="margin-bottom: 10px;">{% trans 'Готово' %}</button>
       </form>
+      {% if referendum.is_ready == False %}
+        <form class="form" method="get" action="{% url 'delete' %}" style="display: inline-block;">
+          <input type="hidden" name="type" value="referendum" />
+          <input type="hidden" name="id" value="{{ referendum.id }}" />
+          <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+          <button type="submit" class="btn btn-danger btn-lg edit-ref-btn">{% trans 'Удалить референдум' %}</button>
+        </form>
+      {% endif %}
     </div>
     {% endif %}
 
@@ -68,12 +86,12 @@
       <div style="margin-top: 10px;">
         {% if not user.is_authenticated %}
           <div class="alert alert-warning">
-            <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того,  чтобпроголосовать, необходимо зарегистрироваться.' %}
+            <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, необходимо зарегистрироваться.' %}
           </div>
         {% else %}
           {% if not user.is_approved %}
             <div class="alert alert-warning">
-              <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для тогочтобы  проголосовать, необходимо зарегистрироваться.' %}
+              <strong>{% trans 'Внимание!' %}</strong> {% trans 'Для того, чтобы проголосовать, необходимо зарегистрироваться.' %}
             </div>
           {% endif %}
         {% endif %}
