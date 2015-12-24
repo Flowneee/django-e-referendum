@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
+{% block title_block %}{% trans 'Детали референдума' %}{% endblock %}
+
 {% block content_block %}
 {% if referendum.is_moderated == False and referendum.initiator != user or referendum.is_moderated == False and user.is_staff != True %}
   <h3>{% trans 'Ошибка, такого референдуума не существует.' %}</h3>
@@ -49,16 +51,14 @@
         </div>
         <div class="panel-body">
           {{ question.text }}
-          {% if user.is_authenticated and user.is_approved and not referendum.is_over %}
-            <div style="margin-top: 10px;">
-              {% include 'referendums/vote_buttons.html' %}
-            </div> 
-          {% endif %}
+          <div style="margin-top: 10px;">
+            {% include 'referendums/vote_buttons.html' %}
+          </div> 
         </div>
       </div>
     </div>
     {% endfor %}
-    {% if not referendum.is_ready %}
+    {% if not referendum.is_ready and referendum.initiator == user or not referendum.is_ready and user.is_staff == True %}
     <div class="row">
       <div class="alert alert-danger" style="font-size: 16px;">
         <strong>{% trans 'Внимание!' %}</strong> {% trans 'После нажатия одной из этих кнопок вы не сможете больше редактировать референдум.' %}

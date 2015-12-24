@@ -5,6 +5,8 @@ urlpatterns = [
     url(r'^ready/(?P<referendum_pk>[0-9]+)/$',
         make_referendum_ready,
         name='make_referendum_ready'),
+    url(r'^referendum/mylist/$', MyListView.as_view(),
+        name='my_referendums'),
     url(r'^add/$', add, name='add'),
     url(r'^create/$', CreateReferendumView.as_view(),
         name='create_referendum'),

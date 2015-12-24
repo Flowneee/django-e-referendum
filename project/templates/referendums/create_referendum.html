@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
+{% block title_block %}{% trans 'Создать референдум' %}{% endblock %}
+
 {% block content_block %}
   <div class="col-sm-12 col-md-8 col-lg-6"> 
     <form class="form" role="form" action="{% url 'create_referendum' %}" method="post">

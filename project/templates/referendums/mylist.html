@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title_block %}{% trans 'Мои референдумы' %}{% endblock %}
+
+{% block content_block %}
+  <div class="col-md-12 col-md-offset-0 col-lg-8 col-lg-offset-2">
+    {% for ref in my_ref_list %}
+      {% include 'referendums/referendum_short.html' %}
+    {% empty %}
+      <h2>{% trans 'Вы еще ничего не сделали' %}</h2>
+    {% endfor %}
+  </div>
+{% endblock content_block %}

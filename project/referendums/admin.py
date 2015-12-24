@@ -82,12 +82,12 @@ class ReferendumAdmin(NestedModelAdmin):
                                             'title',
                                             'comment',
                                             'is_over',
+                                            'is_ready',
+                                            'is_moderated',
                                             'result',
                                             'initiator',
                                             'top_address',
                                             'datetime_created',
-                                            'is_ready',
-                                            'is_moderated',
                                             )}),
     )
     add_fieldsets = (
@@ -97,12 +97,12 @@ class ReferendumAdmin(NestedModelAdmin):
                        'comment',
                        'question',
                        'is_over',
+                       'is_ready',
+                       'is_moderated',
                        'result',
                        'initiator',
                        'top_address',
-                       'datetime_created',
-                       'is_ready',
-                       'is_moderated',)},),
+                       'datetime_created',)},),
     )
 
     inlines = [
@@ -114,9 +114,8 @@ class ReferendumAdmin(NestedModelAdmin):
         models.CharField: {'widget': TextInput(attrs={'size': '30'})},
     }
 
-    list_display = ('id', 'title', 'is_over',
-                    'result', 'initiator', 'datetime_created',
-                    'is_ready', 'is_moderated', )
+    list_display = ('id', 'title', 'is_over', 'is_ready', 'is_moderated',
+                    'result', 'initiator', 'datetime_created', )
     list_filter = ('is_ready', 'is_moderated', 'is_over', )
     search_fields = ('id', 'title', 'result', 'initiator', 'datetime_created',
                      'is_over', 'is_ready', 'is_moderated', )

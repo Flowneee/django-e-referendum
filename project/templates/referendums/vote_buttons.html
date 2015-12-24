@@ -7,15 +7,19 @@
     {% for answer in question.question_answers.all %}
       <tr>
         <td>
-          <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
-            {% csrf_token %}
-            <input type="hidden" name="type" value="vote" />
-            <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
-            <input type="hidden" name="question_id" value="{{ question.id }}" />
-            <input type="hidden" name="answer_id" value="{{ answer.id }}" />
-            <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}">
-          </form>
-          {% if referendum.is_ready == False %}
+          {% if user.is_authenticated and user.is_approved and not referendum.is_over %}
+            <form class="form" role="form" action="{% url 'add' %}" method ="post" style="display:inline-block;">
+              {% csrf_token %}
+              <input type="hidden" name="type" value="vote" />
+              <input type="hidden" name="referendum_id" value="{{ referendum.id }}" />
+              <input type="hidden" name="question_id" value="{{ question.id }}" />
+              <input type="hidden" name="answer_id" value="{{ answer.id }}" />
+              <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}" title="{{ answer.comment }}">
+            </form>
+          {% else %}
+            <input class="btn btn-default btn-lg vote-button wrapped {{ answer.style }}" type="submit" value="{{ answer.label }}" id="btn-{{ answer.id }}" disabled=true>
+          {% endif %}
+          {% if not referendum.is_ready and referendum.initiator == user or not referendum.is_ready and user.is_staff == True %}
             <form class="form" method="get" action="{% url 'delete' %}" style="display: inline-block;">
               <input type="hidden" name="type" value="answer" />
               <input type="hidden" name="id" value="{{ answer.id }}" />
@@ -24,13 +28,13 @@
             </form>
           {% endif %}
         </td>
-        <td>
+        <td align=center style="vertical-align: middle;">
           <strong>{% trans 'Голосов' %}</strong>: {{ answer.get_votes_number }}
         </td>
       </tr>
     {% endfor %}
   </table>
-  {% if referendum.is_ready == False %}
+  {% if not referendum.is_ready and referendum.initiator == user or not referendum.is_ready and user.is_staff == True %}
     <div class="row" style="margin-top: 10px; margin-left: 10px;">
       <div class="panel panel-default col-sm-12 col-md-8 col-lg-6">
         <div class="panel-heading">

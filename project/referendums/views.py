@@ -33,6 +33,16 @@ class IndexView(TemplateView):
         return context
 
 
+class MyListView(TemplateView):
+    template_name = 'referendums/mylist.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MyListView, self).get_context_data(**kwargs)
+        context['my_ref_list'] = Referendum.objects.\
+            filter(initiator=self.request.user).order_by('-datetime_created')
+        return context
+
+
 class CreateReferendumView(CreateView):
     template_name = 'referendums/create_referendum.html'
     model = Referendum
